@@ -1,0 +1,90 @@
+<div class="container mt-4">
+
+  <h3>Employee Documents</h3>
+
+  <!-- Employee Select -->
+  <div class="mb-3">
+    <label class="form-label">Select Employee</label>
+    <select class="form-select"
+            [(ngModel)]="selectedEmployeeId"
+            (change)="loadDocuments()">
+      <option [ngValue]="undefined">-- Select Employee --</option>
+      <option *ngFor="let emp of employees"
+              [ngValue]="emp.id">
+        {{ emp.fullName }}
+      </option>
+    </select>
+  </div>
+
+  <!-- File Input -->
+  <div class="mb-3">
+    <label class="form-label">Select File</label>
+    <input type="file"
+           class="form-control"
+           (change)="onFileSelected($event)">
+  </div>
+
+  <!-- Document Type -->
+  <div class="mb-3">
+    <label class="form-label">Document Type</label>
+    <input type="text"
+           class="form-control"
+           [(ngModel)]="documentType"
+           placeholder="Enter document type">
+  </div>
+
+  <button class="btn btn-primary mb-4" (click)="upload()">Upload</button>
+
+  <!-- 🔴 FILE PREVIEW AREA (RED BOX PLACE) -->
+<div *ngIf="filePreview"
+     style="border:2px solid red; padding:15px; margin-bottom:20px;">
+
+  <h5>File Preview</h5>
+
+  <!-- IMAGE -->
+  <img *ngIf="fileType?.startsWith('image/')"
+       [src]="filePreview"
+       style="max-height:300px;"
+       class="img-fluid">
+
+  <!-- PDF -->
+<iframe *ngIf="fileType === 'application/pdf'"
+        [src]="safePreviewUrl"
+        style="width:100%; height:300px;">
+</iframe>
+
+
+  <!-- OTHER -->
+  <p *ngIf="!fileType?.startsWith('image/') && fileType !== 'application/pdf'">
+    Preview not available
+  </p>
+
+</div>
+
+
+  <!-- Documents Table -->
+  <table class="table table-bordered" *ngIf="documents.length > 0">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>File Name</th>
+        <th>Type</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let doc of documents; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ doc.fileName }}</td>
+        <td>{{ doc.documentType }}</td>
+        <td>
+          <button class="btn btn-sm btn-success me-2"
+                  (click)="download(doc)">Download</button>
+          <button class="btn btn-sm btn-danger"
+                  (click)="delete(doc)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>

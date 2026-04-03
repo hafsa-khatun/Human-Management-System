@@ -1,0 +1,83 @@
+<div class="container mt-4">
+  <h2 class="mb-4 text-primary">
+    <i class="fas fa-user-plus me-2"></i>Registration Form
+  </h2>
+
+  <form (ngSubmit)="saveRegistration()" class="p-4 border-0 rounded-4 shadow-sm bg-white mb-5">
+    <div class="row g-3">
+      
+      <div class="col-md-4">
+        <label class="form-label fw-bold small text-muted">Full Name</label>
+        <div class="input-group">
+          <span class="input-group-text bg-light border-end-0"><i class="fas fa-user text-secondary"></i></span>
+          <input type="text" class="form-control shadow-none border-start-0" 
+                 [(ngModel)]="registrationForm().name" name="name" placeholder="Enter name" required />
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label fw-bold small text-muted">Phone Number</label>
+        <div class="input-group">
+          <span class="input-group-text bg-light border-end-0"><i class="fas fa-phone text-secondary"></i></span>
+          <input type="text" class="form-control shadow-none border-start-0" 
+                 [(ngModel)]="registrationForm().phone" name="phone" placeholder="01XXX-XXXXXX" required />
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label fw-bold small text-muted">Reason</label>
+        <div class="input-group">
+          <span class="input-group-text bg-light border-end-0"><i class="fas fa-info-circle text-secondary"></i></span>
+          <input type="text" class="form-control shadow-none border-start-0" 
+                 [(ngModel)]="registrationForm().reason" name="reason" placeholder="Reason for registration" required />
+        </div>
+      </div>
+
+      <div class="col-12 mt-4 text-end">
+        <button type="submit" class="btn btn-primary px-4 fw-bold">
+          <i class="fas" [ngClass]="editingId() ? 'fa-sync-alt' : 'fa-save'"></i>
+          {{ editingId() ? ' Update' : ' Save Registration' }}
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <hr class="my-5" />
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3><i class="fas fa-list-ul me-2 text-secondary"></i>All Registrations</h3>
+    <span class="badge bg-primary rounded-pill">{{ registrationService.registrations().length }} Total</span>
+  </div>
+
+  <div class="table-responsive shadow-sm rounded-3">
+    <table class="table table-hover align-middle mb-0 bg-white">
+      <thead class="bg-light text-uppercase small fw-bold text-muted">
+        <tr>
+          <th class="ps-4">ID</th>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Reason</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let reg of registrationService.registrations(); let i = index">
+          <td class="ps-4 text-muted">{{ i + 1 }}</td>
+          <td class="fw-bold">{{ reg.name }}</td>
+          <td><i class="fas fa-mobile-alt me-2 text-muted"></i>{{ reg.phone }}</td>
+          <td>{{ reg.reason }}</td>
+          <td class="text-center">
+            <div class="btn-group gap-2">
+              <button class="btn btn-sm btn-outline-warning rounded-2" (click)="editRegistration(reg)" title="Edit">
+                <i class="fas fa-pencil-alt"></i> Edit
+              </button>
+              <button class="btn btn-sm btn-outline-danger rounded-2" (click)="deleteRegistration(reg.id!)" title="Delete">
+                <i class="fas fa-trash-alt"></i> Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,134 @@
+<div class="container mt-4">
+  <h2 class="mb-4 text-primary">
+    <i class="fas fa-calendar-check me-2"></i>Leave Management
+  </h2>
+
+  <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-5">
+    
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <label class="form-label fw-bold small text-muted">Select Registration</label>
+        <div class="input-group">
+          <span class="input-group-text bg-light"><i class="fas fa-user-check text-primary"></i></span>
+          <select id="registration" class="form-select shadow-none" [(ngModel)]="selectedRegistrationId" 
+                  name="registration" (change)="onRegistrationChange()" required>
+            <option value="" disabled>Choose a person...</option>
+            <option *ngFor="let reg of registrationService.registrations()" [value]="reg.id">
+              {{ reg.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <hr class="text-muted opacity-25">
+
+    <form (ngSubmit)="saveLeave()" class="leave-form mt-3">
+      <div class="row g-3">
+        
+        <div class="col-md-3">
+          <label class="form-label fw-bold small text-muted">Leave Type</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light"><i class="fas fa-plane-departure text-secondary"></i></span>
+            <input type="text" class="form-control shadow-none" [(ngModel)]="leaveForm().leaveType" 
+                   name="leaveType" placeholder="e.g. Sick, Annual" required />
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label fw-bold small text-muted">Start Date</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light"><i class="fas fa-calendar-plus text-secondary"></i></span>
+            <input type="date" class="form-control shadow-none" [(ngModel)]="leaveForm().startDate" 
+                   name="startDate" required />
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label fw-bold small text-muted">End Date</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light"><i class="fas fa-calendar-minus text-secondary"></i></span>
+            <input type="date" class="form-control shadow-none" [(ngModel)]="leaveForm().endDate" 
+                   name="endDate" required />
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label fw-bold small text-muted">Status</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light"><i class="fas fa-info-circle text-secondary"></i></span>
+            <input type="text" class="form-control shadow-none" [(ngModel)]="leaveForm().status" 
+                   name="status" placeholder="Pending/Approved" required />
+          </div>
+        </div>
+
+        <div class="col-12 text-end mt-4">
+          <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm">
+            <i class="fas" [ngClass]="editingId() ? 'fa-edit' : 'fa-paper-plane'"></i>
+            {{ editingId() ? ' Update Leave' : ' Submit Leave Request' }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3><i class="fas fa-history me-2 text-secondary"></i>Leaves History</h3>
+    <span class="badge bg-info rounded-pill px-3" *ngIf="leaveService.leaves().length > 0">
+      {{ leaveService.leaves().length }} Records Found
+    </span>
+  </div>
+
+  <div class="table-responsive shadow-sm rounded-3 overflow-hidden" *ngIf="leaveService.leaves().length > 0">
+    <table class="table table-hover align-middle mb-0 bg-white">
+      <thead class="bg-light text-uppercase small fw-bold">
+        <tr>
+          <th class="ps-4">#</th>
+          <th>Registration</th>
+          <th>Leave Type</th>
+          <th>Timeline</th>
+          <th>Status</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let leave of leaveService.leaves(); let i = index">
+          <td class="ps-4 text-muted">{{ i + 1 }}</td>
+          <td>
+            <div class="fw-bold text-dark">{{ leave.registration.name || 'N/A' }}</div>
+          </td>
+          <td><span class="badge bg-light text-dark border">{{ leave.leaveType }}</span></td>
+          <td>
+            <small class="text-muted">
+              <i class="far fa-calendar-alt me-1"></i> {{ leave.startDate }} <br>
+              <i class="fas fa-arrow-right me-1 fa-xs"></i> {{ leave.endDate }}
+            </small>
+          </td>
+          <td>
+            <span class="badge rounded-pill" [ngClass]="{
+              'bg-warning text-dark': leave.status === 'Pending',
+              'bg-success': leave.status === 'Approved' || leave.status === 'COMPLETED',
+              'bg-secondary': leave.status !== 'Pending' && leave.status !== 'Approved'
+            }">{{ leave.status }}</span>
+          </td>
+          <td class="text-center">
+            <div class="btn-group gap-2">
+              <button class="btn btn-sm btn-outline-warning" (click)="editLeave(leave)" title="Edit">
+                <i class="fas fa-pencil-alt"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" (click)="deleteLeave(leave.id!)" title="Delete">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="text-center p-5 bg-light rounded-4 border border-dashed mt-3" *ngIf="leaveService.leaves().length === 0">
+    <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+    <p class="text-muted fw-medium">No leaves found for this registration.</p>
+  </div>
+
+</div>

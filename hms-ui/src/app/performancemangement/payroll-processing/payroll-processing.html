@@ -1,0 +1,62 @@
+<div class="container mt-4">
+  <h3>Payroll Processing</h3>
+
+  <div class="row mb-3">
+    <div class="col-md-4">
+      <label>Select Month</label>
+      <input type="month"
+             class="form-control"
+             [(ngModel)]="month"
+             (change)="onMonthChange()"
+             name="month">
+    </div>
+    <div class="col-md-2 mt-4">
+      <button class="btn btn-primary w-100"
+              (click)="processPayrollForMonth()"
+              [disabled]="processing || !month">
+        {{ processing ? 'Processing...' : 'Generate Payroll' }}
+      </button>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- ✅ Processing indicator -->
+  <div *ngIf="processing" class="alert alert-info">
+    <span class="spinner-border spinner-border-sm me-2"></span>
+    Processing payroll for {{ month }}...
+  </div>
+
+  <h4 *ngIf="payrollList.length > 0">Payroll List - {{ month }}</h4>
+
+  <table class="table table-bordered mt-3" *ngIf="payrollList.length > 0">
+    <thead class="table-dark">
+      <tr>
+        <th>Employee</th>
+        <th>Gross Salary</th>
+        <th>Absent Days</th>
+        <th>Approved Leave</th>
+        <th>Deduction</th>
+        <th>Net Salary</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of payrollList; trackBy: trackByEmployeeCode">
+        <td>{{ p.employeeCode }} - {{ getEmployeeName(p.employeeCode) }}</td>
+        <td>{{ p.grossSalary | number:'1.2-2' }}</td>
+        <td>{{ p.absentDays || 0 }}</td>
+        <td>{{ p.approvedLeaveDays || 0 }}</td>
+        <td class="text-danger">- {{ p.deduction | number:'1.2-2' }}</td>
+        <td class="text-success fw-bold">{{ p.netSalary | number:'1.2-2' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="payrollList.length === 0 && !processing && month" class="alert alert-warning">
+    <p class="text-muted">No payroll data found for {{ month }}.</p>
+  </div>
+  
+  <div *ngIf="!month && !processing" class="alert alert-info">
+    <p class="text-muted">Please select a month and click "Generate Payroll" button.</p>
+  </div>
+</div>

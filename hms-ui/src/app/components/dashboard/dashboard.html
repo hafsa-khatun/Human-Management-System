@@ -1,0 +1,140 @@
+<div class="dashboard">
+  <div class="header">
+    <h1>📊 HMS Analytics Dashboard</h1>
+    <p>Real-time Employee Management & Recruitment Overview</p>
+  </div>
+
+  <div *ngIf="!loading()" class="dashboard-content">
+    
+    <div class="stats-grid">
+      <div class="stat-card" style="border-left: 5px solid #4e73df; background: linear-gradient(to right, #ffffff, #f8f9fc);">
+        <div class="stat-card-content">
+          <div class="stat-icon" style="background: #eaecf4; color: #4e73df;">👥</div>
+          <div class="stat-info">
+            <p class="stat-label" style="color: #4e73df; font-weight: bold;">Total Employees</p>
+            <h3 class="stat-value">{{ totalEmployees() }}</h3>
+          </div>
+        </div>
+        <div class="stat-card-footer">
+          <div class="progress-bar-container">
+            <div class="progress-fill" style="width: 100%; background-color: #4e73df;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card" style="border-left: 5px solid #1cc88a; background: linear-gradient(to right, #ffffff, #f8fff9);">
+        <div class="stat-card-content">
+          <div class="stat-icon" style="background: #e5f9f3; color: #1cc88a;">✓</div>
+          <div class="stat-info">
+            <p class="stat-label" style="color: #1cc88a; font-weight: bold;">Active Employees</p>
+            <h3 class="stat-value">{{ activeEmployees() }}</h3>
+          </div>
+        </div>
+        <div class="stat-card-footer">
+          <div class="progress-bar-container">
+            <div class="progress-fill" [style.width.%]="getPercent(activeEmployees())" style="background-color: #1cc88a;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card" style="border-left: 5px solid #8b5cf6; background: linear-gradient(to right, #ffffff, #fbfaff);">
+        <div class="stat-card-content">
+          <div class="stat-icon" style="background: #f3f0ff; color: #8b5cf6;">📅</div>
+          <div class="stat-info">
+            <p class="stat-label" style="color: #8b5cf6; font-weight: bold;">Approved Leaves</p>
+            <h3 class="stat-value">{{ approvedLeaves() }}</h3>
+          </div>
+        </div>
+        <div class="stat-card-footer">
+          <div class="progress-bar-container">
+            <div class="progress-fill" style="width: 100%; background-color: #8b5cf6;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card" style="border-left: 5px solid #f6c23e; background: linear-gradient(to right, #ffffff, #fffdf5);">
+        <div class="stat-card-content">
+          <div class="stat-icon" style="background: #fff9e6; color: #f6c23e;">📝</div>
+          <div class="stat-info">
+            <p class="stat-label" style="color: #f6c23e; font-weight: bold;">Applicants</p>
+            <h3 class="stat-value">{{ applicantCount() }}</h3>
+          </div>
+        </div>
+        <div class="stat-card-footer">
+          <div class="progress-bar-container">
+            <div class="progress-fill" style="width: 100%; background-color: #f6c23e;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card" style="border-left: 5px solid #36b9cc; background: linear-gradient(to right, #ffffff, #f5fcfe);">
+        <div class="stat-card-content">
+          <div class="stat-icon" style="background: #e7f7f9; color: #36b9cc;">🎓</div>
+          <div class="stat-info">
+            <p class="stat-label" style="color: #36b9cc; font-weight: bold;">Trainings</p>
+            <h3 class="stat-value">{{ trainingCount() }}</h3>
+          </div>
+        </div>
+        <div class="stat-card-footer">
+          <div class="progress-bar-container">
+            <div class="progress-fill" style="width: 100%; background-color: #36b9cc;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card" style="border-left: 5px solid #e74a3b; background: linear-gradient(to right, #ffffff, #fff5f5);">
+        <div class="stat-card-content">
+          <div class="stat-icon" style="background: #ffebe9; color: #e74a3b;">⛔</div>
+          <div class="stat-info">
+            <p class="stat-label" style="color: #e74a3b; font-weight: bold;">Inactive</p>
+            <h3 class="stat-value">{{ inactiveEmployees() }}</h3>
+          </div>
+        </div>
+        <div class="stat-card-footer">
+          <div class="progress-bar-container">
+            <div class="progress-fill" [style.width.%]="getPercent(inactiveEmployees())" style="background-color: #e74a3b;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid mt-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-white"><h3 class="card-title text-dark">📊 Status Distribution</h3></div>
+        <div class="card-body">
+          <svg viewBox="0 0 300 200" class="chart-svg">
+            <circle cx="100" cy="100" r="60" fill="#1cc88a" opacity="0.8"/>
+            <text x="100" y="95" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Active</text>
+            <text x="100" y="115" text-anchor="middle" font-size="14" fill="white">{{ getPercent(activeEmployees()) }}%</text>
+
+            <circle cx="200" cy="100" r="50" fill="#e74a3b" opacity="0.8"/>
+            <text x="200" y="95" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Inactive</text>
+            <text x="200" y="115" text-anchor="middle" font-size="14" fill="white">{{ getPercent(inactiveEmployees()) }}%</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-white"><h3 class="card-title text-dark">🏢 Department Breakdown</h3></div>
+        <div class="card-body">
+          <div class="dept-list">
+            <div *ngFor="let dept of departmentStats()" class="dept-item mb-3">
+              <div class="dept-header d-flex justify-content-between align-items-center mb-1">
+                <h4 class="dept-name m-0 small fw-bold text-secondary">{{ dept.name }}</h4>
+                <span class="badge rounded-pill" [style.background-color]="dept.color" style="color: white; font-size: 0.7rem;">
+                  {{ dept.count }}
+                </span>
+              </div>
+              <div class="progress-bar-container" style="height: 6px;">
+                <div class="progress-fill" 
+                     [style.width.%]="getPercent(dept.count)"
+                     [style.background-color]="dept.color">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

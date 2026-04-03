@@ -1,0 +1,198 @@
+<div class="container mt-4 pb-5">
+  <h2 class="mb-4 text-primary fw-bold">
+    <i class="fas fa-user-check me-2"></i>Attendance Report
+  </h2>
+
+  <div class="card border-0 shadow-sm rounded-4 mb-5 bg-white">
+    <div class="card-body p-4">
+      <h5 class="card-title mb-4 text-secondary">
+        <i class="fas fa-plus-circle me-1"></i> Add New Attendance
+      </h5>
+      
+      <form (ngSubmit)="add()" #attendanceForm="ngForm">
+        <div class="row g-3">
+          
+          <div class="col-md-4">
+            <label class="form-label fw-bold small">Select Employee</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light"><i class="fas fa-user text-muted"></i></span>
+              <select class="form-select shadow-none"
+                      [(ngModel)]="newAttendance.employeeCode"
+                      name="code"
+                      (change)="setEmployeeName()"
+                      required>
+                <option value="">-- Select --</option>
+                <option *ngFor="let emp of employees" [value]="emp.id">
+                  {{emp.fullName}} (ID: {{emp.id}})
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label fw-bold small">Date</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light"><i class="fas fa-calendar-alt text-muted"></i></span>
+              <input type="date" class="form-control shadow-none"
+                     [(ngModel)]="newAttendance.date"
+                     name="date" required>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label fw-bold small">Status</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light"><i class="fas fa-info-circle text-muted"></i></span>
+              <select class="form-select shadow-none"
+                      [(ngModel)]="newAttendance.status"
+                      name="status">
+                <option value="PRESENT">PRESENT</option>
+                <option value="ABSENT">ABSENT</option>
+                <option value="LATE">LATE</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label fw-bold small">In Time</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light"><i class="fas fa-sign-in-alt text-success"></i></span>
+              <input type="time" class="form-control shadow-none"
+                     [(ngModel)]="newAttendance.inTime"
+                     name="inTime" required>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label fw-bold small">Out Time</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light"><i class="fas fa-sign-out-alt text-danger"></i></span>
+              <input type="time" class="form-control shadow-none"
+                     [(ngModel)]="newAttendance.outTime"
+                     name="outTime" required>
+            </div>
+          </div>
+
+          <div class="col-md-4 d-flex align-items-end">
+            <button class="btn btn-primary w-100 fw-bold py-2 shadow-sm">
+              <i class="fas fa-save me-2"></i>Add Attendance
+            </button>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <hr class="my-5 opacity-25">
+
+  <div class="row">
+    
+    <div class="col-12 mb-4">
+      <h4 class="text-success mb-3"><i class="fas fa-check-circle me-2"></i>Present</h4>
+      <div class="table-responsive shadow-sm rounded-3">
+        <table class="table table-hover align-middle bg-white mb-0">
+          <thead class="table-success">
+            <tr>
+              <th>Code</th><th>Name</th><th>Date</th><th>In</th><th>Out</th><th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of attendanceList() | statusFilter:'PRESENT'">
+              <td class="fw-bold">{{a.employeeCode}}</td>
+              <td>{{a.employeeName}}</td>
+              <td><i class="far fa-calendar-alt me-1 text-muted"></i>{{a.date}}</td>
+              <td><span class="badge bg-light text-success border border-success font-monospace">{{a.inTime}}</span></td>
+              <td><span class="badge bg-light text-muted border font-monospace">{{a.outTime}}</span></td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-outline-warning me-1" (click)="update(a)"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-outline-danger" (click)="delete(a.id!)"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="col-12 mb-4">
+      <h4 class="text-danger mb-3"><i class="fas fa-times-circle me-2"></i>Absent</h4>
+      <div class="table-responsive shadow-sm rounded-3">
+        <table class="table table-hover align-middle bg-white mb-0">
+          <thead class="table-danger">
+            <tr>
+              <th>Code</th><th>Name</th><th>Date</th><th>In</th><th>Out</th><th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of attendanceList() | statusFilter:'ABSENT'">
+              <td class="fw-bold">{{a.employeeCode}}</td>
+              <td>{{a.employeeName}}</td>
+              <td>{{a.date}}</td>
+              <td>--:--</td><td>--:--</td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-outline-warning me-1" (click)="update(a)"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-outline-danger" (click)="delete(a.id!)"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="col-12 mb-4">
+      <h4 class="text-warning mb-3"><i class="fas fa-exclamation-circle me-2"></i>Late</h4>
+      <div class="table-responsive shadow-sm rounded-3">
+        <table class="table table-hover align-middle bg-white mb-0">
+          <thead class="table-warning">
+            <tr>
+              <th>Code</th><th>Name</th><th>Date</th><th>In</th><th>Out</th><th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of attendanceList() | statusFilter:'LATE'">
+              <td class="fw-bold">{{a.employeeCode}}</td>
+              <td>{{a.employeeName}}</td>
+              <td>{{a.date}}</td>
+              <td><span class="text-danger fw-bold">{{a.inTime}}</span></td>
+              <td>{{a.outTime}}</td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-outline-warning me-1" (click)="update(a)"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-outline-danger" (click)="delete(a.id!)"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="col-12 mt-4">
+      <h4 class="text-dark mb-3"><i class="fas fa-history me-2"></i>All Attendance History</h4>
+      <div class="table-responsive shadow-sm rounded-3">
+        <table class="table table-striped table-hover align-middle bg-white mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>Code</th><th>Name</th><th>Date</th><th>In</th><th>Out</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of attendanceList()">
+              <td class="fw-bold">{{a.employeeCode}}</td>
+              <td>{{a.employeeName}}</td>
+              <td>{{a.date}}</td>
+              <td class="font-monospace small">{{a.inTime}}</td>
+              <td class="font-monospace small">{{a.outTime}}</td>
+              <td>
+                <span class="badge rounded-pill px-3" [ngClass]="{
+                  'bg-success': a.status === 'PRESENT',
+                  'bg-danger': a.status === 'ABSENT',
+                  'bg-warning text-dark': a.status === 'LATE'
+                }">{{a.status}}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,175 @@
+<style>
+  :root {
+    /* Muted & Sophisticated Palette */
+    --body-bg: #eef2f6;          /* Distinct light blue-gray background */
+    --card-main: #ffffff;
+    --input-bg: #fcfdfe;
+    --primary-muted: #5356fb;    /* Professional Indigo */
+    --secondary-slate: #64748b;  /* Slate for labels */
+    --table-header: #f8fafc;
+    --accent-soft: #dbeafe;      /* Soft blue for highlights */
+  }
+
+  body { 
+    background-color: var(--body-bg) !important; 
+    font-family: 'Segoe UI', Roboto, sans-serif;
+  }
+
+  .main-container {
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
+
+  /* Form Card Styling */
+  .glass-card {
+    background: var(--card-main);
+    border: 1px solid #d1d9e6;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  }
+
+  .form-control {
+    background-color: var(--input-bg);
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 15px;
+  }
+
+  .form-control:focus {
+    border-color: var(--primary-muted);
+    box-shadow: 0 0 0 3px rgba(83, 86, 251, 0.1);
+  }
+
+  /* Header Stripe */
+  .section-title {
+    color: #1e293b;
+    font-weight: 800;
+    border-left: 5px solid var(--primary-muted);
+    padding-left: 15px;
+    margin-bottom: 30px;
+  }
+
+  /* Professional Buttons */
+  .btn-action {
+    background-color: var(--primary-muted);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 30px;
+    font-weight: 600;
+    transition: 0.3s;
+  }
+
+  .btn-action:hover {
+    background-color: #3f42d4;
+    transform: translateY(-2px);
+    color: white;
+  }
+
+  /* Table Customization */
+  .table-custom {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+  }
+
+  .table-custom thead {
+    background-color: #f1f5f9;
+  }
+
+  .table-custom th {
+    color: var(--secondary-slate);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 15px;
+  }
+
+  .row-hover:hover {
+    background-color: #f9fafb !important;
+  }
+</style>
+
+<div class="main-container container">
+  
+  <h3 class="section-title text-uppercase">Department Management</h3>
+
+  <div class="glass-card mb-5">
+    <div class="card-body p-4">
+      <div class="d-flex align-items-center mb-4">
+         <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+            <i class="bi bi-building"></i>
+         </div>
+         <h5 class="m-0 fw-bold text-muted">{{ editMode() ? 'Edit' : 'Create' }} Department</h5>
+      </div>
+
+      <form (ngSubmit)="save()" class="row g-4">
+        <div class="col-md-7">
+          <label class="small fw-bold text-uppercase text-muted mb-2 d-block">Department Name</label>
+          <input type="text" class="form-control" 
+                 [ngModel]="currentDept().name"
+                 (ngModelChange)="onNameChange($event)"
+                 name="departmentName" 
+                 required
+                 placeholder="Type department title here...">
+        </div>
+
+        <div class="col-md-5" *ngIf="currentDept().createdDate">
+          <label class="small fw-bold text-uppercase text-muted mb-2 d-block"> Registration Date</label>
+          <input type="text" class="form-control" style="background-color: #f8fafc;"
+                 [value]="currentDept().createdDate | date:'MMMM d, yyyy | HH:mm'" 
+                 readonly>
+        </div>
+
+        <div class="col-12 mt-4">
+          <button type="submit" class="btn btn-action shadow-sm me-2">
+            {{ editMode() ? 'Update Changes' : 'Confirm & Add' }}
+          </button>
+          <button type="button" class="btn btn-link text-decoration-none text-muted fw-bold" (click)="cancel()">
+            Discard
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="table-custom shadow-sm">
+    <table class="table table-borderless align-middle mb-0">
+      <thead>
+        <tr>
+          <th class="ps-4">Index</th>
+          <th>Department Identity</th>
+          <th>Created On</th>
+          <th class="text-end pe-4">Manage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let dep of departments(); let i = index" class="row-hover border-top">
+          <td class="ps-4 text-muted fw-bold">#{{ i + 1 }}</td>
+          <td>
+            <div class="fw-bold text-dark fs-6">{{ dep.name }}</div>
+            <span class="badge bg-light text-primary border border-primary-subtle" style="font-size: 10px;">VERIFIED</span>
+          </td>
+          <td class="text-muted small">
+            <i class="bi bi-calendar3 me-1"></i> {{ dep.createdDate | date:'mediumDate' }}
+          </td>
+          <td class="text-end pe-4">
+            <button class="btn btn-sm btn-outline-primary px-3 rounded-pill me-1" (click)="edit(dep)">
+              Edit
+            </button>
+            <button class="btn btn-sm btn-outline-danger px-3 rounded-pill" (click)="delete(dep)">
+              Remove
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="departments().length === 0">
+          <td colspan="4" class="text-center py-5">
+            <p class="text-muted mb-0">The department directory is currently empty.</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

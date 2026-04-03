@@ -1,0 +1,217 @@
+<style>
+  :root {
+    --body-bg: #eef2f6;          /* Professional soft background */
+    --card-main: #ffffff;
+    --primary-indigo: #4f46e5;   /* Modern accent color */
+    --text-dark: #1e293b;
+    --text-muted: #64748b;
+    --border-soft: #e2e8f0;
+    --input-focus: rgba(79, 70, 229, 0.1);
+  }
+
+  body { 
+    background-color: var(--body-bg) !important; 
+    color: var(--text-dark);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  /* Section Header */
+  .page-header {
+    border-left: 4px solid var(--primary-indigo);
+    padding-left: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  /* Card Styling */
+  .admin-card {
+    background: var(--card-main);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  }
+
+  .card-header-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-soft);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Form Elements */
+  .form-label-custom {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .form-control, .form-select {
+    border: 1.5px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 10px 12px;
+    transition: all 0.2s;
+  }
+
+  .form-control:focus, .form-select:focus {
+    border-color: var(--primary-indigo);
+    box-shadow: 0 0 0 4px var(--input-focus);
+  }
+
+  /* Buttons */
+  .btn-primary-indigo {
+    background-color: var(--primary-indigo);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-weight: 600;
+    transition: transform 0.2s;
+  }
+
+  .btn-primary-indigo:hover {
+    background-color: #4338ca;
+    transform: translateY(-1px);
+    color: white;
+  }
+
+  /* Table UI */
+  .table-container {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border-soft);
+    overflow: hidden;
+  }
+
+  .table thead {
+    background-color: #f8fafc;
+  }
+
+  .table th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--text-muted);
+    padding: 15px;
+    border-bottom: 2px solid var(--border-soft);
+  }
+
+  .table td {
+    padding: 12px 15px;
+    vertical-align: middle;
+  }
+
+  .badge-dept {
+    background-color: #eff6ff;
+    color: #2563eb;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+</style>
+
+<div class="container py-5">
+  
+  <div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+      <h2 class="fw-bold m-0">Designation Management</h2>
+      <p class="text-muted small m-0">Assign roles and map them to organization departments</p>
+    </div>
+    <div class="badge bg-white text-primary border px-3 py-2 rounded-pill shadow-sm">
+      {{ designations().length }} Active Roles
+    </div>
+  </div>
+
+  <div class="admin-card mb-5 p-4">
+    <div class="card-header-title">
+      {{ editMode() ? '✏️ Edit Role Details' : '➕ Create New Designation' }}
+    </div>
+
+    <form (ngSubmit)="save()" class="row g-4">
+      <div class="col-md-5">
+        <label class="form-label-custom">Designation Name</label>
+        <input type="text" class="form-control"
+               [ngModel]="currentDesg().name"
+               (ngModelChange)="onNameChange($event)"
+               name="designationName"
+               required
+               placeholder="e.g. Senior Software Engineer">
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label-custom">Assign Department</label>
+        <select class="form-select"
+                [ngModel]="currentDesg().departmentId"
+                (ngModelChange)="onDepartmentChange($event)"
+                name="departmentId"
+                required>
+          <option [ngValue]="0">Select Department...</option>
+          <option *ngFor="let d of departments()" [ngValue]="d.id">
+            {{ d.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-md-3" *ngIf="currentDesg().createdDate">
+        <label class="form-label-custom">System Timestamp</label>
+        <input type="text" class="form-control bg-light text-muted border-0"
+               [value]="currentDesg().createdDate | date:'MMM d, yyyy HH:mm'"
+               readonly>
+      </div>
+
+      <div class="col-12 mt-4 pt-2">
+        <button type="submit" class="btn btn-primary-indigo me-2 shadow-sm">
+          {{ editMode() ? 'Update Records' : 'Add Designation' }}
+        </button>
+        <button type="button" class="btn btn-outline-secondary border-0 fw-bold" (click)="cancel()">
+          Discard
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-container shadow-sm">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr>
+          <th class="ps-4">#</th>
+          <th>Designation Role</th>
+          <th>Department</th>
+          <th>Creation Date</th>
+          <th class="text-end pe-4">Controls</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let desg of designations(); let i = index">
+          <td class="ps-4 text-muted small fw-bold">{{ i + 1 }}</td>
+          <td>
+            <div class="fw-bold text-dark">{{ desg.name }}</div>
+          </td>
+          <td>
+            <span class="badge-dept">{{ desg.departmentName }}</span>
+          </td>
+          <td>
+            <div class="text-muted small">{{ desg.createdDate | date:'mediumDate' }}</div>
+          </td>
+          <td class="text-end pe-4">
+            <button class="btn btn-sm btn-link text-primary text-decoration-none fw-bold me-2" (click)="edit(desg)">Edit</button>
+            <button class="btn btn-sm btn-link text-danger text-decoration-none fw-bold" (click)="delete(desg)">Delete</button>
+          </td>
+        </tr>
+
+        <tr *ngIf="designations().length === 0">
+          <td colspan="5" class="text-center py-5 text-muted italic">
+            <div class="py-4">
+              <i class="bi bi-shield-lock display-6 opacity-25 d-block mb-2"></i>
+              No designations have been defined yet.
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

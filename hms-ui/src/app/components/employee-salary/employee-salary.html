@@ -1,0 +1,179 @@
+<div class="container mt-4 pb-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary fw-bold mb-0">
+      <i class="fas fa-wallet me-2"></i>Salary Management
+    </h2>
+    
+    <button class="btn btn-success shadow-sm px-4 fw-bold"
+            (click)="showForm.set(true)"
+            *ngIf="!showForm()">
+      <i class="fas fa-plus-circle me-2"></i>Add Salary
+    </button>
+  </div>
+
+  <div *ngIf="showForm()" class="fade-in">
+    <div class="card border-0 shadow rounded-4 mb-4 overflow-hidden">
+      <div class="card-header bg-primary text-white p-3">
+        <h5 class="mb-0 small-caps">
+          <i class="fas" [ngClass]="editingId() ? 'fa-edit' : 'fa-plus-square'"></i>
+          {{ editingId() ? ' Update Salary Record' : ' Create New Salary Record' }}
+        </h5>
+      </div>
+      
+      <div class="card-body p-4">
+        <form (ngSubmit)="saveSalary()" #salaryFormRef="ngForm">
+          <div class="row g-3">
+            
+            <div class="col-md-4">
+              <label class="form-label fw-bold small">Salary Code</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="fas fa-hashtag text-muted"></i></span>
+                <input type="text" class="form-control shadow-none" [(ngModel)]="salaryForm().salaryCode" name="salaryCode">
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-bold small">Employee</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="fas fa-user-tie text-muted"></i></span>
+                <select class="form-select shadow-none" [(ngModel)]="salaryForm().employeeId" name="employeeId" (ngModelChange)="onEmployeeChange($event)">
+                  <option value="">-- Select Employee --</option>
+                  <option *ngFor="let emp of employees()" [value]="emp.id">{{ emp.fullName }}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-bold small">Phone</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="fas fa-phone text-muted"></i></span>
+                <input type="text" class="form-control shadow-none" [(ngModel)]="salaryForm().phone" name="phone">
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-bold small">Basic Salary</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="fas fa-money-bill text-success"></i></span>
+                <input type="number" class="form-control shadow-none bg-light" [(ngModel)]="salaryForm().basicSalary" name="basicSalary" readonly>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-bold small">Overtime Rate</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="fas fa-percentage text-muted"></i></span>
+                <input type="number" class="form-control shadow-none" [(ngModel)]="salaryForm().overTimeRate" name="overTimeRate">
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-bold small">Overtime Hour</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="fas fa-clock text-muted"></i></span>
+                <input type="number" class="form-control shadow-none" [(ngModel)]="salaryForm().overTimeHour" name="overTimeHour">
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-bold small">Bank Name</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light"><i class="fas fa-university text-muted"></i></span>
+                <input type="text" class="form-control shadow-none" [(ngModel)]="salaryForm().bankName" name="bankName">
+              </div>
+            </div>
+
+            <div class="col-12">
+              <div class="alert alert-info border-0 mb-0 d-flex justify-content-between align-items-center">
+                <span class="fw-bold"><i class="fas fa-calculator me-2"></i>Gross Salary Calculation:</span>
+                <h4 class="mb-0 fw-bold">{{ salaryForm().grossSalary | number:'1.2-2' }}</h4>
+              </div>
+            </div>
+
+            <div class="col-12 text-end mt-3">
+              <button type="button" class="btn btn-outline-secondary me-2 px-4" (click)="resetForm(); showForm.set(false)">
+                <i class="fas fa-times me-1"></i> Cancel
+              </button>
+              <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm">
+                <i class="fas fa-save me-1"></i> {{ editingId() ? 'Update Salary' : 'Save Salary' }}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+    <div class="card-body p-0">
+      <div class="px-4 py-3 border-bottom bg-light d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-list-ol me-2 text-primary"></i>Salary List</h5>
+      </div>
+      
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th class="ps-4">SL</th>
+              <th>Code</th>
+              <th>Employee Name</th>
+              <th>Basic</th>
+              <th>House</th>
+              <th>Medical</th>
+              <th>Transport</th>
+              <th>OT Pay</th>
+              <th class="bg-primary text-white">Gross</th>
+              <th>Bank</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of salaries(); let i = index">
+              <td class="ps-4 text-muted small">{{ i + 1 }}</td>
+              <td class="fw-bold">{{ s.salaryCode }}</td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="avatar-circle me-2">{{ s.name.charAt(0) }}</div>
+                  <span class="fw-medium">{{ s.name }}</span>
+                </div>
+              </td>
+              <td>${{ s.basicSalary }}</td>
+              <td>${{ s.houseRent }}</td>
+              <td>${{ s.medical }}</td>
+              <td>${{ s.transport }}</td>
+              <td class="text-secondary small">
+                <i class="fas fa-plus-circle me-1"></i>{{ s.overTimeRate * s.overTimeHour }}
+              </td>
+              <td class="fw-bold text-primary">${{ s.grossSalary }}</td>
+              <td>
+                <span class="badge bg-light text-dark border fw-normal">
+                  <i class="fas fa-university me-1 text-muted"></i>{{ s.bankName }}
+                </span>
+              </td>
+              <td class="text-center px-3">
+                <div class="btn-group">
+                  <button class="btn btn-sm btn-outline-warning rounded-2 me-1" (click)="editSalary(s)" title="Edit">
+                    <i class="fas fa-pencil-alt"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger rounded-2" (click)="deleteSalary(s.id!)" title="Delete">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .avatar-circle {
+    width: 30px; height: 30px; background: #e9ecef; color: #0d6efd;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: bold; border: 1px solid #dee2e6;
+  }
+  .fade-in { animation: fadeIn 0.3s ease-in; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+</style>

@@ -1,0 +1,143 @@
+<div class="container mt-4">
+  <h2 class="mb-4"><i class="fas fa-project-diagram me-2 text-primary"></i>Project Management</h2>
+
+  <div class="mb-4 p-4 border-0 rounded-4 shadow-sm bg-white">
+    <h5 class="mb-3 text-secondary">
+      <i class="fas" [ngClass]="newProject().projectId ? 'fa-edit' : 'fa-plus-circle'"></i>
+      {{ newProject().projectId ? ' Edit Project' : ' Add New Project' }}
+    </h5>
+    <div class="row g-3 align-items-center">
+
+      <div class="col-md-3">
+        <div class="input-group">
+          <span class="input-group-text bg-light"><i class="fas fa-tag"></i></span>
+          <input type="text" class="form-control shadow-none" placeholder="Project Name" [(ngModel)]="newProject().projectName" name="projectName" required>
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <input type="text" class="form-control shadow-none" placeholder="Code" [(ngModel)]="newProject().projectCode" name="projectCode" required>
+      </div>
+
+      <div class="col-md-3">
+        <input type="text" class="form-control shadow-none" placeholder="Description" [(ngModel)]="newProject().description" name="description">
+      </div>
+
+      <div class="col-md-2">
+        <label class="small text-muted mb-1">Start Date</label>
+        <input type="date" class="form-control shadow-none" [(ngModel)]="newProject().startDate" name="startDate" required>
+      </div>
+
+      <div class="col-md-2">
+        <label class="small text-muted mb-1">End Date</label>
+        <input type="date" class="form-control shadow-none" [(ngModel)]="newProject().endDate" name="endDate" required>
+      </div>
+
+      <div class="col-md-2">
+        <div class="input-group">
+          <span class="input-group-text bg-light"><i class="fas fa-dollar-sign"></i></span>
+          <input type="number" class="form-control shadow-none" placeholder="Budget" [(ngModel)]="newProject().budget" name="budget">
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <select class="form-select shadow-none" [(ngModel)]="newProject().status" name="status">
+          <option *ngFor="let s of statusList" [value]="s">{{ s }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <input type="text" class="form-control shadow-none" placeholder="Client Name" [(ngModel)]="newProject().clientName" name="clientName">
+      </div>
+
+      <div class="col-md-2">
+        <select class="form-select shadow-none" [(ngModel)]="newProject().priority" name="priority">
+          <option *ngFor="let p of priorityList" [value]="p">{{ p }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100 fw-bold" *ngIf="!newProject().projectId" (click)="addProject()">
+          <i class="fas fa-plus me-1"></i> Add
+        </button>
+        <button class="btn btn-success w-100 fw-bold" *ngIf="newProject().projectId" (click)="updateProject()">
+          <i class="fas fa-check-circle me-1"></i> Update
+        </button>
+      </div>
+
+      <div class="col-md-2">
+        <button class="btn btn-outline-secondary w-100" (click)="resetForm()">
+          <i class="fas fa-redo-alt me-1"></i> Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <div class="mb-4 d-flex gap-2 flex-wrap">
+    <button class="btn btn-sm btn-outline-warning px-3 rounded-pill" (click)="showStatus.set(ProjectStatus.PENDING)">
+      <i class="fas fa-clock me-1"></i> Pending
+    </button>
+    <button class="btn btn-sm btn-outline-info px-3 rounded-pill" (click)="showStatus.set(ProjectStatus.RUNNING)">
+      <i class="fas fa-sync fa-spin me-1"></i> Running
+    </button>
+    <button class="btn btn-sm btn-outline-success px-3 rounded-pill" (click)="showStatus.set(ProjectStatus.COMPLETED)">
+      <i class="fas fa-check-double me-1"></i> Completed
+    </button>
+    <button class="btn btn-sm btn-dark px-3 rounded-pill" (click)="showStatus.set(null)">
+      <i class="fas fa-list me-1"></i> Show All
+    </button>
+  </div>
+
+  <div class="table-responsive shadow-sm rounded-3">
+    <table class="table table-hover align-middle mb-0 bg-white">
+      <thead class="bg-light">
+        <tr>
+          <th>Name</th>
+          <th>Code</th>
+          <th>Description</th>
+          <th>Timeline</th> <th>Budget</th>
+          <th>Status</th>
+          <th>Client</th>
+          <th>Priority</th>
+          <th class="text-center">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of filteredProjects()">
+          <td class="fw-bold text-primary">{{ p.projectName }}</td>
+          <td><span class="badge bg-light text-dark">{{ p.projectCode }}</span></td>
+          <td class="small">{{ p.description }}</td>
+          <td class="small">
+            <i class="far fa-calendar-alt text-muted me-1"></i> {{ p.startDate }} <br>
+            <i class="far fa-calendar-check text-muted me-1"></i> {{ p.endDate }}
+          </td>
+          <td class="fw-bold">${{ p.budget }}</td>
+          <td>
+            <span class="badge" [ngClass]="{
+              'bg-warning text-dark': p.status === 'PENDING',
+              'bg-info': p.status === 'RUNNING',
+              'bg-success': p.status === 'COMPLETED'
+            }">{{ p.status }}</span>
+          </td>
+          <td>{{ p.clientName }}</td>
+          <td>{{ p.priority }}</td>
+          <td class="text-center">
+            <div class="btn-group">
+              <button class="btn btn-sm btn-outline-warning me-1" (click)="editProject(p)" title="Edit">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger me-1" (click)="deleteProject(p.projectId)" title="Delete">
+                <i class="fas fa-trash"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-primary" (click)="viewProjectReport(p.projectId!)" title="Report">
+                <i class="fas fa-file-invoice"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

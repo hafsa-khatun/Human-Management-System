@@ -1,0 +1,68 @@
+<h2>Leave Requests</h2>
+
+<div class="buttons" *ngIf="authService.isAdmin()">
+  <button (click)="showAll()">All Employees</button>
+  <button (click)="showPending()">Pending</button>
+  <button (click)="showApproved()">Approved</button>
+  <button (click)="showRejected()">Rejected</button>
+</div>
+
+<form (ngSubmit)="apply()" *ngIf="authService.isUser()">
+  <select [(ngModel)]="newLeave().employeeCode" name="employeeCode"
+          (ngModelChange)="onEmployeeCodeChange($event)" required>
+    <option value="">-- Select Employee --</option>
+    <option *ngFor="let emp of employees()" [value]="emp.id">{{ emp.fullName }}</option>
+  </select>
+
+  <input type="text" placeholder="Employee Name"
+         [(ngModel)]="newLeave().employeeName" name="employeeName" readonly>
+
+  <input type="text" placeholder="Leave Type"
+         [(ngModel)]="newLeave().leaveType" name="leaveType" required>
+
+  <label>Start Date</label>
+  <input type="date" [(ngModel)]="newLeave().startDate" name="startDate" required>
+
+  <label>End Date</label>
+  <input type="date" [(ngModel)]="newLeave().endDate" name="endDate" required>
+
+  <input type="text" placeholder="Reason"
+         [(ngModel)]="newLeave().reason" name="reason" required>
+  <input type="text" placeholder="Proposal"
+         [(ngModel)]="newLeave().leaveProposal" name="leaveProposal">
+
+  <button type="submit">Apply Leave</button>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>SL</th>
+      <th>Code</th>
+      <th>Name</th>
+      <th>Leave Type</th>
+      <th>Start Date</th>
+      <th>End Date</th>
+      <th>Reason</th>
+      <th>Proposal</th>
+      <th>Status</th>
+      <th *ngIf="authService.isAdmin()">Actions</th> </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let l of filteredList(); let i = index">
+      <td>{{ i + 1 }}</td>
+      <td>{{ l.employeeCode }}</td>
+      <td>{{ l.employeeName }}</td>
+      <td>{{ l.leaveType }}</td>
+      <td>{{ l.startDate }}</td>
+      <td>{{ l.endDate }}</td>
+      <td>{{ l.reason }}</td>
+      <td>{{ l.leaveProposal }}</td>
+      <td>{{ l.status }}</td>
+      <td *ngIf="authService.isAdmin()"> <button *ngIf="l.status === 'PENDING'" (click)="approve(l.id!)">Approve</button>
+        <button *ngIf="l.status === 'PENDING'" (click)="reject(l.id!)">Reject</button>
+        <button (click)="deleteLeave(l.id!)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

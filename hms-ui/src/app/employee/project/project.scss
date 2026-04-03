@@ -1,0 +1,174 @@
+// 1. Variables - Sohoje color ebong spacing maintain korar jonno
+$primary-color: #0d6efd;
+$primary-hover: #0b5ed7;
+$bg-light: #f8f9fa;
+$border-color: #dee2e6;
+$text-main: #212529;
+$text-muted: #6c757d;
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+$transition: all 0.3s ease;
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px; // Spacing barano hoyeche breathability-r jonno
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: $text-main;
+
+  h2 {
+    margin-bottom: 24px;
+    color: $primary-color;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  form {
+    background: #ffffff; // Shada background beshi professional lage
+    padding: 30px;
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    box-shadow: $shadow-sm;
+
+    .mb-2 {
+      margin-bottom: 20px;
+
+      label {
+        font-weight: 550;
+        display: block;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+      }
+
+      input,
+      textarea,
+      select {
+        border-radius: 6px;
+        border: 1px solid $border-color;
+        padding: 10px 12px;
+        width: 100%;
+        font-size: 14px;
+        transition: $transition;
+
+        &:focus {
+          outline: none;
+          border-color: $primary-color;
+          box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
+        }
+
+        &::placeholder {
+          color: $text-muted;
+        }
+      }
+
+      textarea {
+        min-height: 80px;
+        resize: vertical;
+      }
+    }
+
+    button {
+      padding: 10px 20px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: $transition;
+    }
+  }
+
+  hr {
+    margin: 40px 0;
+    border: 0;
+    border-top: 1px solid $border-color;
+  }
+
+  .my-3 {
+    margin: 24px 0;
+    display: flex;
+    gap: 10px; // Buttons-er majhe gap rakhar jonno
+
+    button {
+      min-width: 110px;
+      padding: 8px 16px;
+      font-weight: 500;
+      border-radius: 6px;
+      border: 1px solid $border-color;
+      background: white;
+      transition: $transition;
+
+      &:hover {
+        background: $bg-light;
+      }
+    }
+  }
+
+  // 🔹 Table Design Improvements
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 40px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid $border-color;
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid $border-color;
+    }
+
+    th {
+      background: $bg-light;
+      font-weight: 600;
+      color: $text-main;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background-color: rgba($bg-light, 0.5); // Hover effect table row te
+    }
+
+    button {
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 4px;
+    }
+  }
+}
+
+// 🔹 Responsive
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 15px;
+
+    table {
+      display: block;
+      overflow-x: auto; // Mobile e table scroll hobe
+    }
+
+    form {
+      padding: 20px;
+    }
+
+    .my-3 {
+      flex-direction: column;
+      button {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// 🔹 Interactive Components
+button.active {
+  color: #fff !important;
+  background-color: $primary-color !important;
+  border-color: $primary-color !important;
+  box-shadow: 0 4px 10px rgba($primary-color, 0.3);
+}
