@@ -94,4 +94,49 @@ export class PayrollProcessing implements OnInit {
   trackByEmployeeCode(index: number, item: PayrollProcessingModel): string {
     return item.employeeCode;
   }
+  //reports
+openPayrollReport(): void {
+  this.payrollService.getPayrollReport().subscribe({
+    next: (data: Blob) => {
+      const fileURL = window.URL.createObjectURL(data);
+
+      const link = document.createElement('a');
+      link.href = fileURL;
+      link.download = 'Payroll.pdf'; // 👉 filename
+      link.click();
+
+      window.URL.revokeObjectURL(fileURL); // cleanup
+    },
+    error: (err) => {
+      console.error('Error loading report:', err);
+      alert('Failed to load payroll report');
+    }
+  });
+}
+//search
+
+
+// ১. Search text hold korar jonno variable
+searchText: string = ''; 
+
+// ২. Filtered list return korar jonno logic
+get filteredPayrollList() {
+  // Jodi search box khali thake, puru list-tai dekhabe
+  if (!this.searchText) {
+    return this.payrollList;
+  }
+
+  const search = this.searchText.toLowerCase();
+
+  return this.payrollList.filter(p => {
+    const name = this.getEmployeeName(p.employeeCode).toLowerCase();
+    const code = p.employeeCode.toString().toLowerCase();
+    
+    // Name ba Code - jekono ekta match korlei dekhabe
+    return name.includes(search) || code.includes(search);
+  });
+}
+
+
+
 }

@@ -27,4 +27,15 @@ export class PayrollService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+
+//reports
+getPayrollReport() {
+  return this.http.get('http://localhost:8080/reports/payroll-report', {
+    responseType: 'blob'
+  });
+}
+
+
+
+
 }

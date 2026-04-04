@@ -102,5 +102,20 @@ public class ReportController {
         }
 
     }
+    @GetMapping("/payroll-report")
+    public ResponseEntity<byte[]> payrollCard(){
+        Map<String, Object> params = new HashMap<>();
 
+        try {
+            byte[] pdf = reportService.generateReport("payroll",params);
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,"inline; filename=Payroll.pdf")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(pdf);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }

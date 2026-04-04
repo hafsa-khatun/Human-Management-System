@@ -1,82 +1,48 @@
 .sidebar {
-  width: 240px;
-  min-height: calc(100vh - 56px); /* minus navbar height */
+  background-color: #1a1d21 !important;
+  transition: all 0.3s;
+  
+  .nav-link {
+    font-size: 0.95rem;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    opacity: 0.8;
+    &:hover {
+      background: rgba(255,255,255,0.1);
+      opacity: 1;
+    }
+  }
+
+  .menu-header {
+    background: rgba(255,255,255,0.05);
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+
+  .submenu {
+    list-style: none;
+    padding-left: 25px;
+    margin-bottom: 10px;
+    .nav-link {
+      font-size: 0.85rem;
+      padding: 6px 12px;
+      color: #adb5bd !important;
+      &:hover {
+        color: #fff !important;
+      }
+    }
+  }
+
+  .active-link {
+    background: #0d6efd !important;
+    opacity: 1 !important;
+  }
+
+  .active-sub {
+    color: #0d6efd !important;
+    font-weight: bold;
+  }
 }
 
-.nav-link {
-  border-radius: 6px;
-}
-
-.nav-link:hover {
-  background-color: #495057;
-}
-// ............................................................................................QC start
-/* 1. Main Link Style */
-.nav-item .nav-link {
-  padding: 12px 15px;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  border-radius: 8px;
-  margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-}
-
-/* 2. Hover Effect (Using your rgba style) */
-.nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  color: #fff !important;
-  padding-left: 18px; /* Smooth shift to the right */
-}
-
-/* 3. Active Link State */
-.nav-link.active {
-  background-color: rgba(255, 255, 255, 0.2) !important;
-  border-left: 4px solid #00d4ff; 
-  color: #fff !important;
-}
-
-/* 4. Sub-menu (Collapse) Styling */
-.collapse.ps-3 {
-  border-left: 1px solid rgba(255, 255, 255, 0.1); 
-  margin-left: 20px; 
-}
-
-.collapse .nav-link {
-  font-size: 13px;
-  padding: 8px 12px;
-  opacity: 0.8;
-  background: transparent !important;
-}
-
-.collapse .nav-link:hover {
-  opacity: 1;
-  color: #00d4ff !important;
-  padding-left: 15px;
-}
-
-/* 5. Dropdown Icon Animation */
-.fa-chevron-down {
-  font-size: 10px;
-  transition: transform 0.3s ease;
-}
-
-/* 6. Smooth Transition for Collapse */
-.collapse {
-  transition: height 0.3s ease-out;
-}
-//......................................................qc................................end
-//......................................start inventory............................................
-ul.nav.flex-column {
-  display: block;
-  visibility: visible;
-  height: auto;
-}
-
-/* Ensure active link background */
-.nav-link.active {
-  background-color: rgba(255, 255, 255, 0.15) !important;
-  color: #00d4ff !important;
-}
-//inventory end.......................................................
+.cursor-pointer { cursor: pointer; }
